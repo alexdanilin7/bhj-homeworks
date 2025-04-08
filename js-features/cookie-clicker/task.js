@@ -27,7 +27,6 @@ cookie.onclick = function(){
         const diffTime = currentTime - previousTime;
         clickerVelosity.textContent = (1/(diffTime/1000)).toFixed(2);
      }
-
      previousTime = currentTime;
 
 }
