@@ -35,12 +35,21 @@ function addCart(dataId, imgPath, count){
             <div class="cart__product" data-id="${dataId}">
                 <img class="cart__product-image" src="${imgPath}">
                 <div class="cart__product-count">${count}</div>
+                <a href="#" class="cart__product-remove">&times;</a>
             </div>
             `);
     }
     saveProductsToLocalStorage();
 }
 
+cartProducts.addEventListener('click', event=>{
+    if(event.target.classList.contains('cart__product-remove')){
+        event.preventDefault();
+        const product = event.target.closest(".cart__product");
+        product.remove();
+        saveProductsToLocalStorage();
+    }
+});
 
 products.forEach(product =>{
     const btnAdd = product.querySelector('.product__add');
