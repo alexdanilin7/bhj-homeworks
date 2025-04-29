@@ -7,28 +7,32 @@ const TASKS_KEY = 'tasks';
 
 function createTask(inputValue){
     if (inputValue !==''){
-        const task = document.createElement('div');
-        task.classList.add('task')
-        const taskTitle = document.createElement('div');
-        taskTitle.classList.add('task__title');
-        taskTitle.textContent = inputValue;
-        const removeBtn = document.createElement('a');
-        removeBtn.href ="#";
-        removeBtn.classList.add('task__remove');
-        removeBtn.innerHTML = '&times;';
-        removeBtn.addEventListener('click', (event)=>{
-            event.preventDefault();
-            task.remove();
-            saveTasksToLocalStorage();
-        });
-        task.appendChild(taskTitle);
-        task.appendChild(removeBtn);
-        taskList.appendChild(task);
+
+        taskList.insertAdjacentHTML('beforeend', `
+            <div class="task">
+              <div class="task__title">
+                ${inputValue}
+              </div>
+              <a href="#" class="task__remove">&times;</a>
+            </div>
+            `);
+        
         textInput.value='';
         saveTasksToLocalStorage();
     }
     
 }
+
+taskList.addEventListener('click', (event)=>{
+    if(event.target.classList.contains('task__remove')){
+        event.preventDefault();
+        const task  = event.target.closest('.task');
+        task.remove();
+        saveTasksToLocalStorage();
+    }
+})
+
+
 function saveTasksToLocalStorage() {
     const tasks = [];
     const taskTitles = taskList.querySelectorAll('.task__title');
@@ -36,29 +40,23 @@ function saveTasksToLocalStorage() {
         tasks.push({ title: taskTitle.textContent });
     });
     localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
-    console.log('save');
+    
 }
 
 function loadTasksFromLocalStorage() {
     const savedTasks = localStorage.getItem(TASKS_KEY);
+    console.log(savedTasks);
     if (savedTasks) {
         const tasks = JSON.parse(savedTasks);
-        console.log(tasks);
         tasks.forEach(taskData => {
              createTask(taskData.title);
         });
     }
 }
 
-btnAdd.addEventListener("click", ()=>{
-
+btnAdd.addEventListener("click", (event)=>{
+    event.preventDefault();
     createTask(textInput.value.trim());
 });
-
-textInput.addEventListener('keydown', (event)=>{
-    if(event.key==='Enter'){
-        createTask(textInput.value.trim());
-    }
-})
 
 loadTasksFromLocalStorage();
