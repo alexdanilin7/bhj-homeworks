@@ -30,18 +30,13 @@ function addCart(dataId, imgPath, count){
         const countProductItem = existingItem.querySelector('.cart__product-count');
         countProductItem.textContent=Number(countProductItem.textContent)+Number(count);
     }else{
-        const cartProduct = document.createElement('div');
-        cartProduct.classList.add('cart__product');
-        cartProduct.setAttribute('data-id', dataId);
-        const imgProduct = document.createElement('img');
-        imgProduct.classList.add('cart__product-image');
-        imgProduct.src =  imgPath;
-        const countProduct = document.createElement('div');
-        countProduct.classList.add("cart__product-count");
-        countProduct.textContent = count;
-        cartProduct.appendChild(imgProduct);
-        cartProduct.appendChild(countProduct);
-        cartProducts.appendChild(cartProduct);
+
+        cartProducts.insertAdjacentHTML('beforeend', `
+            <div class="cart__product" data-id="${dataId}">
+                <img class="cart__product-image" src="${imgPath}">
+                <div class="cart__product-count">${count}</div>
+            </div>
+            `);
     }
     saveProductsToLocalStorage();
 }
