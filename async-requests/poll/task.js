@@ -4,7 +4,6 @@ xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/poll');
 xhr.addEventListener('readystatechange', ()=>{
     if(xhr.readyState === xhr.DONE && xhr.status===200){
         const data = JSON.parse(xhr.responseText);
-        console.log(data);
         const pollTitle = document.getElementById('poll__title');
         const pollAnswers = document.getElementById('poll__answers');
         pollTitle.textContent = data.data.title;
@@ -16,17 +15,22 @@ xhr.addEventListener('readystatechange', ()=>{
         const btnAnswers = document.querySelectorAll('.poll__answer');
         btnAnswers.forEach((btnAnswer, index)=>{
             btnAnswer.addEventListener('click', ()=>{
-                console.log(data.id, index);
                 alert('Спасибо, ваш голос засчитан!');
-
-                xhr.open( 'POST', 'https://students.netoservices.ru/nestjs-backend/poll', false);
-                xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-                xhr.send( `vote=${data.id}&answer=${index}`);
-                pollAnswers.innerHTML='';
-                const newdata = JSON.parse(xhr.responseText);
-                newdata.stat.forEach(item=>{
-                    pollAnswers.insertAdjacentHTML('beforeend', `<p>${item.answer} ${item.votes}%</p>`);
+                const xhr2 = new XMLHttpRequest();
+                xhr2.open( 'POST', 'https://students.netoservices.ru/nestjs-backend/poll');
+                xhr2.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
+                xhr2.addEventListener('readystatechange', ()=>{
+                    if(xhr2.readyState === xhr2.DONE && xhr2.status === 201){
+                        pollAnswers.innerHTML='';
+                        const newdata = JSON.parse(xhr2.responseText);
+                        console.log(newdata);
+                        newdata.stat.forEach(item=>{
+                            pollAnswers.insertAdjacentHTML('beforeend', `<p>${item.answer} ${item.votes}%</p>`);
+                        });
+                    }
                 });
+                xhr2.send( `vote=${data.id}&answer=${index}`);
+                
             });
 });
     }
