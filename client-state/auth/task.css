@@ -1,7 +1,15 @@
 .signin {
   display: none;
 }
+.signout {
+  display: none;
+}
+
 .signin_active {
+  display: block;
+}
+
+.signout_active {
   display: block;
 }
 .control {
