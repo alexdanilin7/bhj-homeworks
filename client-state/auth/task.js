@@ -11,13 +11,18 @@ const USER_ID = 'user_id';
 function saveUserOnLocalStorage(userId){
     localStorage.setItem(USER_ID, userId);
 }
+
+function viewUserUI(data){
+    welcome.classList.add('welcome_active');
+    idUser.textContent = data;
+    singin.classList.remove('signin_active');
+    btnSingoutDiv.classList.add('signout_active');
+}
+
 function loadUserFromLocalStorage(){
     const data = localStorage.getItem(USER_ID);
     if (data){
-        welcome.classList.add('welcome_active');
-        idUser.textContent = data;
-        singin.classList.remove('signin_active');
-        btnSingoutDiv.classList.add('signout_active');
+       viewUserUI(data);
     }
 }
 
@@ -30,21 +35,23 @@ btnSingin.addEventListener('click', ()=>{
     const formData = new FormData(formSingin);    
     const xhr = new XMLHttpRequest();
     xhr.open('POST', formSingin.getAttribute('action'));
+    xhr.responseType="json";
     xhr.addEventListener('load', (event)=>{
-        if (xhr.status === 201 && xhr.readyState === xhr.DONE){
-            const data = JSON.parse(xhr.responseText);
+           
+            const data = xhr.response;
             console.log(data.success);
             if (data.success){
-                welcome.classList.add('welcome_active');
-                idUser.textContent = data.user_id;
-                singin.classList.remove('signin_active');
+                // welcome.classList.add('welcome_active');
+                // idUser.textContent = data.user_id;
+                // singin.classList.remove('signin_active');
+                // saveUserOnLocalStorage(data.user_id);
+                // btnSingoutDiv.classList.add('signout_active');
+                viewUserUI(data.user_id);
                 saveUserOnLocalStorage(data.user_id);
-                btnSingoutDiv.classList.add('signout_active');
             }else{
                alert('Неверный логин/пароль');
             }
             formSingin.reset();
-        }
     });
     xhr.send(formData);
 
@@ -53,7 +60,7 @@ btnSingin.addEventListener('click', ()=>{
 btnSingout.addEventListener('click', ()=>{
     localStorage.clear();
     btnSingoutDiv.classList.remove('signout_active');
-    location.reload();
+    welcome.classList.add('welcome_active');
 });
 
 loadUserFromLocalStorage();
